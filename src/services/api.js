@@ -5,7 +5,7 @@ import { getToken, clearSession } from "./authStorage";
 // que o Vite redireciona para http://localhost:8080 (ver server.proxy no vite.config.js) —
 // isso evita o bloqueio de CORS, já que o backend não expõe Access-Control-Allow-Origin.
 // Em produção defina VITE_API_URL com a URL pública da API (ver .env.example).
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 // Instância única do axios usada por todos os services.
 // Centraliza baseURL, timeout, header padrão de JSON e a injeção do token JWT.
