@@ -23,6 +23,8 @@ import EventInsights from "../pages/cashier/EventInsights";
 
 import AdminLogin from "../pages/admin/AdminLogin";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import CreateStall from "../pages/admin/CreateStall";
+import CreateCashier from "../pages/admin/CreateCashier";
 
 // Mapa central de rotas: caminho -> componente de página.
 // Manter tudo num objeto único facilita ver de relance todas as telas do app,
@@ -54,6 +56,8 @@ const routes = {
   // Admin
   "/admin/login": AdminLogin,
   "/admin/dashboard": AdminDashboard,
+  "/admin/create-stall": CreateStall,
+  "/admin/create-cashier": CreateCashier,
 };
 
 // Gera as rotas do react-router a partir do mapa acima.

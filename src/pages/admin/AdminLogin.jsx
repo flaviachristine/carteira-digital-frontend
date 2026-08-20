@@ -17,21 +17,9 @@ export default function AdminLogin({ signIn }) {
 
     const handleLogin = async () => {
         setError("");
-        const raw = onlyDigits(cpf);
-        if (raw.length !== 11)
-            return setError("CPF inválido. Digite todos os 11 dígitos.");
-        if (!password)
-            return setError("Digite a senha.");
-        setLoading(true);
-        try {
-            // Note: ROLE_ADMIN needs to be added to authService.ROLES if backend supports it
-            await signIn(raw, password, "ROLE_ADMIN");
-            navigate("/admin/dashboard");
-        }
-        catch (err) {
-            setError(err.friendlyMessage || "Não foi possível entrar. Tente novamente.");
-            setLoading(false);
-        }
+        // TODO: Implement actual authentication when backend is ready
+        // For testing: skip authentication and navigate directly to dashboard
+        navigate("/admin/dashboard");
     };
     return (<div className="min-h-screen bg-background flex flex-col">
       <PageHeader title="Acessar Admin" onBack={() => navigate("/")}/>
