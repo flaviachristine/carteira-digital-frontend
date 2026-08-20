@@ -21,6 +21,9 @@ import AddCredits from "../pages/cashier/AddCredits";
 import Refund from "../pages/cashier/Refund";
 import EventInsights from "../pages/cashier/EventInsights";
 
+import AdminLogin from "../pages/admin/AdminLogin";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+
 // Mapa central de rotas: caminho -> componente de página.
 // Manter tudo num objeto único facilita ver de relance todas as telas do app,
 // agrupadas por perfil (convidado / barraca / caixa).
@@ -47,6 +50,10 @@ const routes = {
   "/cashier/add-credits": AddCredits,
   "/cashier/refund": Refund,
   "/cashier/insights": EventInsights,
+
+  // Admin
+  "/admin/login": AdminLogin,
+  "/admin/dashboard": AdminDashboard,
 };
 
 // Gera as rotas do react-router a partir do mapa acima.

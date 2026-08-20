@@ -7,14 +7,6 @@ import { useRequireAuth } from "../../helpers/useRequireAuth";
 
 // Valores rápidos de crédito oferecidos como atalho.
 const PRESETS = [20, 50, 100, 200];
-// Formas de pagamento que o caixa recebeu no balcão. É apenas um registro visual:
-// o backend não guarda a forma de pagamento (DepositoRequest tem só cpfCliente e valor).
-const PAY_METHODS = [
-    { id: "debito", label: "💳 Débito", short: "Débito" },
-    { id: "credito", label: "💳 Crédito", short: "Crédito" },
-    { id: "pix", label: "📱 Pix", short: "Pix" },
-];
-const payMethodOf = (id) => PAY_METHODS.find((m) => m.id === id);
 
 // Recarga presencial feita pelo caixa, via POST /transacoes/depositar (exclusivo de ROLE_CAIXA).
 // O endpoint identifica o cliente pelo CPF — e não pelo código de 6 dígitos, que a API
@@ -25,7 +17,6 @@ export default function AddCredits({ cashierLoggedIn, loading: booting, deposit 
     const [cpf, setCpf] = useState("");
     const [amountStr, setAmountStr] = useState("");
     const [custom, setCustom] = useState(false);
-    const [payMethod, setPayMethod] = useState("debito");
     const [step, setStep] = useState("select");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -52,7 +43,7 @@ export default function AddCredits({ cashierLoggedIn, loading: booting, deposit 
         setError("");
         setLoading(true);
         try {
-            const tx = await deposit(rawCpf, val, { cashier: `Caixa (${payMethodOf(payMethod).short})` });
+            const tx = await deposit(rawCpf, val, { cashier: "Caixa" });
             setReceipt(tx);
             setStep("success");
         }
@@ -116,14 +107,6 @@ export default function AddCredits({ cashierLoggedIn, loading: booting, deposit 
               </button>
               {custom && (<input type="number" inputMode="decimal" placeholder="Ex: 75" value={amountStr} onChange={(e) => setAmountStr(e.target.value)} className="input-field mt-3 text-2xl font-bold" autoFocus/>)}
             </div>
-            <div>
-              <p className="font-semibold mb-2">Forma de pagamento</p>
-              <div className="grid grid-cols-3 gap-2">
-                {PAY_METHODS.map((m) => (<button key={m.id} onClick={() => setPayMethod(m.id)} className={`py-4 rounded-2xl border-2 font-semibold text-sm transition-all ${payMethod === m.id ? "border-[#2D6A4F] bg-green-50 text-green-800" : "border-border bg-card text-foreground"}`}>
-                    {m.label}
-                  </button>))}
-              </div>
-            </div>
             {error && <ErrorBanner msg={error}/>}
             <button onClick={() => val > 0 && setStep("confirm")} disabled={val <= 0} className="btn-cashier w-full disabled:opacity-50">
               Adicionar {val > 0 ? R(val) : "créditos"}
@@ -134,7 +117,7 @@ export default function AddCredits({ cashierLoggedIn, loading: booting, deposit 
         {step === "confirm" && (<div className="flex flex-col gap-4">
             <div className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-4">
               <h2 className="font-display text-xl font-bold text-center">Confirmar crédito</h2>
-              {[["CPF", applyMask(rawCpf)], ["Crédito", R(val)], ["Pagamento", payMethodOf(payMethod).label]].map(([label, value]) => (<div key={label} className="flex justify-between items-center border-b border-border pb-3 last:border-0 last:pb-0">
+              {[["CPF", applyMask(rawCpf)], ["Crédito", R(val)]].map(([label, value]) => (<div key={label} className="flex justify-between items-center border-b border-border pb-3 last:border-0 last:pb-0">
                   <span className="text-muted-foreground text-sm">{label}</span>
                   <span className={`font-bold ${label === "Crédito" ? "text-green-700 text-xl" : "text-foreground"}`}>{value}</span>
                 </div>))}

@@ -7,6 +7,7 @@ export const ROLES = {
     CLIENTE: "ROLE_CLIENTE",
     BARRACA: "ROLE_BARRACA",
     CAIXA: "ROLE_CAIXA",
+    ADMIN: "ROLE_ADMIN",
 };
 
 // POST /auth/login — { cpf, senha } -> { token }.

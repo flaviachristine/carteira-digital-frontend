@@ -97,7 +97,7 @@ export default function ChargeGuest({ currentBooth, loading: booting, findCustom
     };
     const stepIdx = STEP_INDEX[step];
     return (<div className="min-h-screen bg-background flex flex-col pb-20">
-      <PageHeader title="Nova cobrança" onBack={() => navigate("/booth/transactions")}/>
+      <PageHeader title="Nova cobrança" onBack={() => navigate("/booth/dashboard")}/>
 
       {/* Barra de progresso das 3 etapas (escondida na tela de sucesso) */}
       {step !== "success" && (<div className="flex px-4 pt-4 gap-2">

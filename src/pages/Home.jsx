@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router";
-import { Wallet, Store, Calculator } from "lucide-react";
+import { Wallet, Store, Calculator, Key } from "lucide-react";
 import { Bandeirinhas } from "../components";
 
-// Os 3 perfis de acesso do app, cada um levando à sua própria tela de login.
+// Os 4 perfis de acesso do app, cada um levando à sua própria tela de login.
 const profiles = [
     { key: "convidado", title: "Convidado", description: "Acesse sua carteira, consulte seu saldo e acompanhe suas compras.", icon: <Wallet size={26}/>, path: "/guest/login", iconBg: "bg-amber-100", iconColor: "text-amber-700", tag: "🎟️" },
     { key: "barraca", title: "Barraca", description: "Realize cobranças e acompanhe as vendas da sua barraca.", icon: <Store size={26}/>, path: "/booth/login", iconBg: "bg-blue-100", iconColor: "text-blue-700", tag: "🏪" },
     { key: "caixa", title: "Caixa", description: "Adicione créditos, realize reembolsos e acompanhe a operação.", icon: <Calculator size={26}/>, path: "/cashier/login", iconBg: "bg-green-100", iconColor: "text-green-800", tag: "💵" },
+    { key: "admin", title: "Admin", description: "Crie e gerencie barracas, caixas e acompanhe a operação geral.", icon: <Key size={26}/>, path: "/admin/login", iconBg: "bg-red-100", iconColor: "text-red-700", tag: "🔐" },
 ];
 
 // Tela inicial (rota "/"): apresenta o app e direciona para o login de cada perfil.

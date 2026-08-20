@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { History, User, LogOut, RefreshCw, Plus } from "lucide-react";
+import { History, LogOut, RefreshCw } from "lucide-react";
 import { R } from "../../helpers/formatter";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
 
-// Atalhos exibidos abaixo do token. "path: null" (Meu perfil) não navega — ainda não tem tela própria.
+// Atalhos exibidos abaixo do token.
 const QUICK_ACTIONS = [
     { icon: <History size={20}/>, label: "Histórico", path: "/guest/history", bg: "bg-blue-100", color: "text-blue-700" },
-    { icon: <Plus size={20}/>, label: "Adicionar saldo", path: "/guest/add-balance", bg: "bg-green-100", color: "text-green-700" },
-    { icon: <User size={20}/>, label: "Meu perfil", path: null, bg: "bg-purple-100", color: "text-purple-700" },
 ];
 
 // Tela principal do convidado (home da carteira). Saldo e código de 6 dígitos vêm de
@@ -80,10 +78,10 @@ export default function GuestWallet({ currentGuest, loading, refreshWallet, sign
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3">
-          {QUICK_ACTIONS.map((a, i) => (<button key={i} onClick={() => a.path && navigate(a.path)} className="bg-card rounded-2xl p-3 border border-border shadow-sm flex flex-col items-center gap-2 hover:bg-muted/50 active:scale-[0.97] transition-all">
-              <div className={`w-11 h-11 rounded-xl ${a.bg} flex items-center justify-center ${a.color}`}>{a.icon}</div>
-              <span className="text-xs font-semibold text-foreground text-center leading-tight">{a.label}</span>
+        <div className="flex flex-col gap-3">
+          {QUICK_ACTIONS.map((a, i) => (<button key={i} onClick={() => a.path && navigate(a.path)} className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-3 hover:bg-muted/50 active:scale-[0.98] transition-all">
+              <div className={`w-12 h-12 rounded-xl ${a.bg} flex items-center justify-center flex-shrink-0 ${a.color}`}>{a.icon}</div>
+              <span className="font-semibold text-foreground">{a.label}</span>
             </button>))}
         </div>
 

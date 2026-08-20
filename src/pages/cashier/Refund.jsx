@@ -38,7 +38,7 @@ export default function Refund({ cashierLoggedIn, loading: booting, refund }) {
         }
         catch (err) {
             setError(err.friendlyMessage || "Não foi possível concluir o reembolso.");
-            setStep("select");
+            setStep("confirm");
         }
         finally {
             setLoading(false);
@@ -67,7 +67,6 @@ export default function Refund({ cashierLoggedIn, loading: booting, refund }) {
               <AlertTriangle size={18} className="text-amber-700 flex-shrink-0 mt-0.5"/>
               <p className="text-sm text-amber-900">
                 O reembolso devolve <strong>todo o saldo</strong> e zera a carteira do cliente.
-                A API não permite reembolso parcial.
               </p>
             </div>
             {error && <ErrorBanner msg={error}/>}

@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { LogOut, Search, Plus, RefreshCw, ShoppingBag, Receipt } from "lucide-react";
-import { CashierBottomNav, StatCard, TxItem } from "../../components";
-import { R, partialMask } from "../../helpers/formatter";
+import { CashierBottomNav, StatCard } from "../../components";
+import { R, partialMask, fmtTime } from "../../helpers/formatter";
 import { sumByType } from "../../helpers/domain";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
+import * as cashierHistoryService from "../../services/cashierHistoryService";
 
 // Atalhos exibidos no topo do dashboard do caixa.
 const QUICK_ACTIONS = [
@@ -12,17 +14,37 @@ const QUICK_ACTIONS = [
     { icon: <RefreshCw size={22}/>, label: "Reembolsar", path: "/cashier/refund", bg: "bg-amber-100", color: "text-amber-700" },
 ];
 
-// Tela inicial do caixa: atalhos para as operações principais e o resumo da operação.
-// Os totais somam apenas o que este operador fez desde que entrou — a API não tem
-// endpoint de relatório/listagem que permita recuperar os números do evento inteiro.
-export default function CashierDashboard({ cashierLoggedIn, session, transactions, loading, signOut }) {
+// Tela inicial do caixa: atalhos para as operações principais e o resumo com histórico completo.
+export default function CashierDashboard({ cashierLoggedIn, session, loading: booting, signOut }) {
     const navigate = useNavigate();
-    if (!useRequireAuth(cashierLoggedIn, "/cashier/login", loading))
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    if (!useRequireAuth(cashierLoggedIn, "/cashier/login", booting))
         return null;
+
+    useEffect(() => {
+        async function loadTransactions() {
+            setLoading(true);
+            setError("");
+            try {
+                const items = await cashierHistoryService.listCashierTransactions();
+                setTransactions(items);
+            } catch (err) {
+                setError(err.friendlyMessage || "Não foi possível carregar o histórico.");
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadTransactions();
+    }, []);
+
     const totalCredits = sumByType(transactions, "credito");
     const totalSales = sumByType(transactions, "compra");
     const totalRefunds = sumByType(transactions, "reembolso");
     const recent = transactions.slice(0, 5);
+
     return (<div className="min-h-screen bg-background flex flex-col pb-20">
       <div className="bg-gradient-to-br from-[#2D6A4F] to-[#40916C] px-5 pt-12 pb-8 text-white relative overflow-hidden">
         <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-white/5"/>
@@ -55,13 +77,38 @@ export default function CashierDashboard({ cashierLoggedIn, session, transaction
           <StatCard label="Operações" value={String(transactions.length)} icon={<Receipt size={16}/>} colorClass="bg-purple-100 text-purple-700"/>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-red-800 text-sm">
+            {error}
+          </div>
+        )}
+
         <div>
-          <h2 className="font-display font-bold mb-3 text-foreground">Movimentações desta sessão</h2>
-          {recent.length === 0 ? (<p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">
-              Nenhuma operação registrada ainda
-            </p>) : (<div className="flex flex-col gap-2">
-              {recent.map((tx) => <TxItem key={tx.id} tx={tx}/>)}
-            </div>)}
+          <h2 className="font-display font-bold mb-3 text-foreground">Movimentações</h2>
+          {loading ? (
+            <p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">
+              Carregando...
+            </p>
+          ) : recent.length === 0 ? (
+            <p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">
+              Nenhuma operação registrada
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {recent.map((tx) => (
+                <div key={tx.id} className="bg-card rounded-2xl p-3 border border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-sm text-foreground break-words">{tx.guestName}</p>
+                    <p className="text-xs text-muted-foreground">Por {tx.operatorName} • {fmtTime(tx.createdAt)}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-bold text-primary">{R(tx.amount)}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{tx.type}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <CashierBottomNav />

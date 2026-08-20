@@ -108,6 +108,7 @@ export function AppStateProvider({ children }) {
         }
         setSession(active);
         setTransactions([]);
+        setProfileName(readStoredName());
         if (active.role === ROLES.CLIENTE)
             await refreshWallet(active);
         return active;
@@ -142,10 +143,16 @@ export function AppStateProvider({ children }) {
         setTransactions((prev) => [tx, ...prev]);
     }, []);
 
-    // GET /usuarios/buscar?token= — identifica o cliente pelo código de 6 dígitos.
+    // GET /usuarios/buscar?token= — identifica o cliente pelo código de 6 dígitos (barraca).
     const findCustomer = useCallback(async (token) => {
         setError("");
         return customerService.findCustomerByToken(token);
+    }, []);
+
+    // GET /usuarios/buscar?cpf= — identifica o cliente pelo CPF (caixa).
+    const findCustomerByCpf = useCallback(async (cpf) => {
+        setError("");
+        return customerService.findCustomerByCpf(cpf);
     }, []);
 
     // POST /transacoes/debitar — cobrança na barraca.
@@ -193,12 +200,14 @@ export function AppStateProvider({ children }) {
     }, [session, profileName]);
 
     const cashierLoggedIn = session?.role === ROLES.CAIXA;
+    const adminLoggedIn = session?.role === ROLES.ADMIN;
 
     const value = useMemo(() => ({
         session,
         currentGuest,
         currentBooth,
         cashierLoggedIn,
+        adminLoggedIn,
         transactions,
         loading,
         error,
@@ -208,10 +217,11 @@ export function AppStateProvider({ children }) {
         signOut,
         refreshWallet,
         findCustomer,
+        findCustomerByCpf,
         charge,
         deposit,
         refund,
-    }), [session, currentGuest, currentBooth, cashierLoggedIn, transactions, loading, error, signIn, signUp, signOut, refreshWallet, findCustomer, charge, deposit, refund]);
+    }), [session, currentGuest, currentBooth, cashierLoggedIn, adminLoggedIn, transactions, loading, error, signIn, signUp, signOut, refreshWallet, findCustomer, findCustomerByCpf, charge, deposit, refund]);
 
     return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

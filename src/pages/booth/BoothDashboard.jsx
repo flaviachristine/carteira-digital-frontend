@@ -6,8 +6,6 @@ import { sumAmount } from "../../helpers/domain";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
 
 // Tela inicial da barraca: atalho para nova cobrança, estatísticas e as últimas vendas.
-// Os números somam apenas as cobranças feitas nesta sessão: a API não tem endpoint de
-// listagem/relatório de transações, então não há como recuperar as vendas anteriores.
 export default function BoothDashboard({ currentBooth, transactions, loading, signOut }) {
     const navigate = useNavigate();
     if (!useRequireAuth(currentBooth, "/booth/login", loading))
@@ -52,12 +50,12 @@ export default function BoothDashboard({ currentBooth, transactions, loading, si
             <button onClick={() => navigate("/booth/transactions")} className="text-xs text-[#1E3A5F] font-bold">Ver tudo</button>
           </div>
           {recent.length === 0 ? (<p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">Nenhuma venda registrada nesta sessão</p>) : (<div className="flex flex-col gap-2">
-              {recent.map((tx) => (<div key={tx.id} className="bg-card rounded-xl p-3 border border-border flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-sm text-foreground">{tx.guestName || "Cliente"}</p>
+              {recent.map((tx) => (<div key={tx.id} className="bg-card rounded-xl p-3 border border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-sm text-foreground break-words">{tx.guestName || "Cliente"}</p>
                     <p className="text-xs text-muted-foreground">{fmtTime(tx.createdAt)}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex-shrink-0">
                     <p className="font-bold text-primary">{R(tx.amount)}</p>
                     <p className="text-xs text-green-600 font-medium">Aprovado</p>
                   </div>

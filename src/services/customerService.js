@@ -14,3 +14,15 @@ export async function findCustomerByToken(token) {
         balance: null,
     };
 }
+
+// GET /usuarios/buscar?cpf=54195453810 — busca por CPF (usado pelo caixa).
+// Resposta: { nome, cpf }. O caixa precisa do CPF completo para fazer reembolso/crédito.
+export async function findCustomerByCpf(cpf) {
+    const { data } = await api.get("/usuarios/buscar", { params: { cpf } });
+    return {
+        name: data?.nome ?? "",
+        cpf: String(cpf),
+        cpfMasked: data?.cpf ?? "",
+        balance: null,
+    };
+}
