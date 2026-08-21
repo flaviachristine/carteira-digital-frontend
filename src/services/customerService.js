@@ -5,7 +5,7 @@ import api from "./api";
 // mascarado ("***.***.***-**") e saldoOculto sempre null: a barraca só precisa
 // confirmar o nome antes de debitar, não conhecer o saldo do cliente.
 export async function findCustomerByToken(token) {
-    const { data } = await api.get("/usuarios/buscar", { params: { token } });
+    const { data } = await api.get("/usuarios/buscar/token", { params: { token } });
     return {
         name: data?.nome ?? "",
         cpfMasked: data?.cpf ?? "",
@@ -18,7 +18,7 @@ export async function findCustomerByToken(token) {
 // GET /usuarios/buscar?cpf=54195453810 — busca por CPF (usado pelo caixa).
 // Resposta: { nome, cpf }. O caixa precisa do CPF completo para fazer reembolso/crédito.
 export async function findCustomerByCpf(cpf) {
-    const { data } = await api.get("/usuarios/buscar", { params: { cpf } });
+    const { data } = await api.get("/usuarios/buscar/cpf", { params: { cpf } });
     return {
         name: data?.nome ?? "",
         cpf: String(cpf),
