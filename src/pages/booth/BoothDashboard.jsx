@@ -49,7 +49,7 @@ export default function BoothDashboard({ currentBooth, transactions, loading, si
             <h2 className="font-display font-bold text-foreground">Últimas vendas</h2>
             <button onClick={() => navigate("/booth/transactions")} className="text-xs text-[#1E3A5F] font-bold">Ver tudo</button>
           </div>
-          {recent.length === 0 ? (<p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">Nenhuma venda registrada nesta sessão</p>) : (<div className="flex flex-col gap-2">
+          {recent.length === 0 ? (<p className="text-center py-6 text-muted-foreground text-sm bg-card rounded-2xl border border-border">Nenhuma venda registrada</p>) : (<div className="flex flex-col gap-2">
               {recent.map((tx) => (<div key={tx.id} className="bg-card rounded-xl p-3 border border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-sm text-foreground break-words">{tx.guestName || "Cliente"}</p>

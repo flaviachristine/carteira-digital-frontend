@@ -60,7 +60,7 @@ export function AppStateProvider({ children }) {
     // Só faz sentido para ROLE_CLIENTE — os demais perfis não têm carteira.
     const refreshWallet = useCallback(async (active) => {
         const target = active ?? session;
-        if (target?.role !== ROLES.CLIENTE)
+        if (target?.role !== ROLES.CLIENTE && target?.role !== ROLES.CAIXA && target?.role !== ROLES.ADMIN && target?.role !== ROLES.BARRACA)
             return null;
         try {
             const data = await walletService.getMyWallet();
@@ -100,11 +100,14 @@ export function AppStateProvider({ children }) {
             err.friendlyMessage = "Não foi possível ler a sessão retornada pela API.";
             throw err;
         }
-        if (expectedRole && active.role !== expectedRole) {
-            authService.logout();
-            const err = new Error("Perfil incorreto.");
-            err.friendlyMessage = "Este CPF não tem acesso a este perfil. Use a tela correta na página inicial.";
-            throw err;
+        if (expectedRole) {
+            const isAllowed = Array.isArray(expectedRole) ? expectedRole.includes(active.role) : active.role === expectedRole;
+            if (!isAllowed) {
+                authService.logout();
+                const err = new Error("Perfil incorreto.");
+                err.friendlyMessage = "Este CPF não tem acesso a este perfil. Use a tela correta na página inicial.";
+                throw err;
+            }
         }
         setSession(active);
         setTransactions([]);
@@ -183,7 +186,7 @@ export function AppStateProvider({ children }) {
     // currentGuest só existe para ROLE_CLIENTE (é quem tem carteira);
     // currentBooth/cashierLoggedIn identificam o operador logado.
     const currentGuest = useMemo(() => {
-        if (session?.role !== ROLES.CLIENTE)
+        if (session?.role !== ROLES.CLIENTE || session?.role !== ROLES.CAIXA || session?.role !== ROLES.ADMIN || session?.role !== ROLES.BARRACA)
             return null;
         return {
             cpf: session.cpf,

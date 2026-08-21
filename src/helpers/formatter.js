@@ -4,10 +4,18 @@ import { Plus, RefreshCw, ShoppingBag } from "lucide-react";
 export const R = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 // Formata um objeto Date para "HH:mm" no padrão brasileiro.
-export const fmtTime = (d) => d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+export const fmtTime = (d) => {
+    if (!d) return "—";
+    const date = d instanceof Date ? d : new Date(d);
+    return isNaN(date) ? "—" : date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+};
 
 // Formata um objeto Date para "dd/mm".
-export const fmtDate = (d) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+export const fmtDate = (d) => {
+    if (!d) return "—";
+    const date = d instanceof Date ? d : new Date(d);
+    return isNaN(date) ? "—" : date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+};
 
 // Aceita "12,50" e "12.50"; devolve 0 para qualquer entrada inválida.
 export const parseAmount = (value) => parseFloat(String(value).replace(",", ".")) || 0;
@@ -26,6 +34,19 @@ export const applyMask = (value) => {
     if (d.length <= 9)
         return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
     return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+};
+
+// Formata valor monetário conforme o usuário digita (ex: "2000" -> "20,00", "200000" -> "2.000,00").
+// Interpreta os dígitos como centavos e aplica separador de milhares e decimal.
+export const formatMoneyInput = (value) => {
+    const d = onlyDigits(value);
+    if (!d) return "";
+    const padded = d.padStart(3, "0"); 
+    let intPart = padded.slice(0, -2); 
+    const decPart = padded.slice(-2); 
+    intPart = String(Number(intPart)); 
+    const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+    return `${formatted},${decPart}`;
 };
 
 // Mostra só os 4 últimos dígitos do CPF, escondendo o resto com "•" (usado em telas de exibição, não de digitação).

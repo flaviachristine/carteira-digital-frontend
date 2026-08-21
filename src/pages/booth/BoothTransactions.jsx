@@ -13,8 +13,9 @@ export default function BoothTransactions({ currentBooth, loading: booting }) {
     const [txs, setTxs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const authorized = useRequireAuth(currentBooth, "/booth/login", booting);
 
-    if (!useRequireAuth(currentBooth, "/booth/login", booting))
+    if (!authorized)
         return null;
 
     useEffect(() => {

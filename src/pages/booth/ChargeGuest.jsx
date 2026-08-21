@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Search, Loader2 } from "lucide-react";
 import { PageHeader, BoothBottomNav, GuestInfoCard, ErrorBanner, SuccessScreen } from "../../components";
-import { R, parseAmount, onlyDigits } from "../../helpers/formatter";
+import { R, parseAmount, onlyDigits, formatMoneyInput } from "../../helpers/formatter";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
 
 // Mapeia cada etapa do fluxo para o índice usado na barra de progresso (find e amount avançam;
@@ -128,7 +128,7 @@ export default function ChargeGuest({ currentBooth, loading: booting, findCustom
               <label className="block text-sm font-semibold mb-1.5">Valor da compra</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-xl">R$</span>
-                <input type="number" inputMode="decimal" placeholder="0,00" value={amountStr} onChange={(e) => setAmountStr(e.target.value)} className="input-field text-3xl font-bold pl-14" autoFocus/>
+                <input type="text" inputMode="decimal" placeholder="0,00" value={amountStr} onChange={(e) => setAmountStr(formatMoneyInput(e.target.value))} className="input-field text-3xl font-bold pl-14" autoFocus/>
               </div>
             </div>
             {errorMsg && <ErrorBanner msg={errorMsg}/>}
