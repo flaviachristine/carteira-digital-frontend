@@ -3,14 +3,20 @@ import api from "./api";
 const RESOURCE = "/transacoes/barraca";
 
 // Normaliza dados de histórico de transações da barraca
+const MAPA_TIPOS = {
+    DEBITO: "compra",
+    DEPOSITO: "credito",
+    REEMBOLSO: "reembolso"
+};
+
 export function normalizeBoothTransaction(item) {
     return {
-        id: String(item.id ?? ""),
-        type: String(item.type ?? "compra"),
-        amount: Number(item.amount ?? 0),
-        guestName: String(item.guestName ?? ""),
-        boothName: String(item.boothName ?? ""),
-        createdAt: item.createdAt instanceof Date ? item.createdAt : new Date(item.createdAt),
+        id: String(item.idTransacao ?? ""),
+        type: MAPA_TIPOS[item.tipo] || "compra",
+        amount: Number(item.valor ?? 0),
+        guestName: String(item.nomeCliente ?? ""),
+        boothName: String(item.nomeOperador ?? ""),
+        createdAt: item.dataHora ? new Date(item.dataHora) : new Date(),
     };
 }
 

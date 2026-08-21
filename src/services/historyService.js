@@ -2,14 +2,19 @@ import api from "./api";
 
 const RESOURCE = "/transacoes/convidado";
 
-// Normaliza dados de histórico vindos da API
+const MAPA_TIPOS = {
+    DEBITO: "compra",
+    DEPOSITO: "credito",
+    REEMBOLSO: "reembolso"
+};
+
 export function normalizeHistoryItem(item) {
     return {
-        id: String(item.id ?? ""),
-        type: String(item.type ?? "compra"),
-        amount: Number(item.amount ?? 0),
-        description: String(item.description ?? ""),
-        createdAt: item.createdAt instanceof Date ? item.createdAt : new Date(item.createdAt),
+        id: String(item.idTransacao ?? ""),
+        type: MAPA_TIPOS[item.tipo] || "compra",
+        amount: Number(item.valor ?? 0),
+        description: String(item.nomeOperador ?? "Caixa/Barraca"),
+        createdAt: item.dataHora ? new Date(item.dataHora) : new Date(),
     };
 }
 
