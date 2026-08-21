@@ -17,10 +17,20 @@ export default function AdminLogin({ signIn }) {
 
     const handleLogin = async () => {
         setError("");
-        // TODO: Implement actual authentication when backend is ready
-        // For testing: skip authentication and navigate directly to dashboard
-        navigate("/admin/dashboard");
+        const raw = onlyDigits(cpf);
+        if (raw.length !== 11) return setError("CPF inválido. Digite todos os 11 dígitos.");
+        if (!password) return setError("Digite a senha.");
+
+        setLoading(true);
+        try {
+            await signIn(raw, password, ROLES.ADMIN);
+            navigate("/admin/dashboard");
+        } catch (err) {
+            setError(err.friendlyMessage || "Não foi possível entrar no painel.");
+            setLoading(false);
+        }
     };
+    
     return (<div className="min-h-screen bg-background flex flex-col">
       <PageHeader title="Acessar Admin" onBack={() => navigate("/")}/>
       <div className="flex-1 p-6 flex flex-col gap-5">
