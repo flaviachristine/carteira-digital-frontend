@@ -1,4 +1,5 @@
 import api from "./api";
+import { onlyDigits } from "../helpers/formatter";
 
 // GET /usuarios/buscar?token=482193 — liberado para ROLE_BARRACA e ROLE_CAIXA.
 // Resposta: { nome, cpf, saldoOculto }. Por privacidade o backend devolve o CPF
@@ -25,4 +26,19 @@ export async function findCustomerByCpf(cpf) {
         cpfMasked: data?.cpf ?? "",
         balance: null,
     };
+}
+
+// GET /carteira/saldo — obtém o saldo de um cliente (se o backend expor para ROLE_CAIXA).
+// Retorna o saldo se disponível, null caso contrário (ex: 403 Forbidden, endpoint não existe, etc).
+// O caixa pode não ter acesso ao saldo por motivos de privacidade/segurança.
+export async function getCustomerBalance(cpf) {
+    try {
+        const { data } = await api.get("/carteira/saldo/reembolso", { params: { cpf: onlyDigits(cpf) } });
+        return Number(data?.saldo ?? 0);
+    } catch (error) {
+        // 403 (acesso negado), 404 (endpoint não existe), ou qualquer outro erro
+        // Retorna null — a tela mostrará "Saldo integral da carteira" como fallback
+        console.debug(`Não foi possível obter saldo do cliente: ${error.status || error.message}`);
+        return null;
+    }
 }

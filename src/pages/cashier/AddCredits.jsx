@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Loader2 } from "lucide-react";
 import { PageHeader, CashierBottomNav, ErrorBanner, SuccessScreen } from "../../components";
-import { R, applyMask, onlyDigits, parseAmount } from "../../helpers/formatter";
+import { R, applyMask, onlyDigits, parseAmount, formatMoneyInput } from "../../helpers/formatter";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
 
 // Valores rápidos de crédito oferecidos como atalho.
@@ -105,7 +105,7 @@ export default function AddCredits({ cashierLoggedIn, loading: booting, deposit 
               <button onClick={() => { setCustom(true); setAmountStr(""); }} className={`w-full mt-3 py-4 rounded-2xl border-2 font-semibold transition-all ${custom ? "border-[#2D6A4F] bg-green-50 text-green-800" : "border-border bg-card text-foreground"}`}>
                 Outro valor
               </button>
-              {custom && (<input type="number" inputMode="decimal" placeholder="Ex: 75" value={amountStr} onChange={(e) => setAmountStr(e.target.value)} className="input-field mt-3 text-2xl font-bold" autoFocus/>)}
+              {custom && (<input type="text" inputMode="decimal" placeholder="Ex: 7500 (75,00)" value={amountStr} onChange={(e) => setAmountStr(formatMoneyInput(e.target.value))} className="input-field mt-3 text-2xl font-bold" autoFocus/>)}
             </div>
             {error && <ErrorBanner msg={error}/>}
             <button onClick={() => val > 0 && setStep("confirm")} disabled={val <= 0} className="btn-cashier w-full disabled:opacity-50">

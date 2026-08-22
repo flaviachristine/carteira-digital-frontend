@@ -26,7 +26,7 @@ export default function GuestLogin({ signIn }) {
             return setError("Digite sua senha.");
         setLoading(true);
         try {
-            await signIn(raw, password, ROLES.CLIENTE, ROLES.ADMIN, ROLES.BARRACA, ROLES.CAIXA);
+            await signIn(raw, password, ROLES.CLIENTE);
             navigate("/guest/wallet");
         }
         catch (err) {

@@ -19,9 +19,9 @@ export default function BoothDashboard({ currentBooth, transactions, loading, si
         <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-white/5"/>
         <div className="relative flex justify-between items-start">
           <div>
-            <p className="text-blue-200 text-sm">Operando como</p>
-            <h1 className="font-display text-2xl font-bold leading-tight">{currentBooth.name}</h1>
-            <p className="text-blue-200 text-xs mt-0.5">CPF {partialMask(currentBooth.cpf)}</p>
+            <p className="text-blue-200 text-sm">Operando com:</p>
+            <h1 className="font-display text-2xl font-bold leading-tight">{currentBooth?.name || "Barraca"}</h1>
+            <p className="text-blue-200 text-xs mt-0.5">CPF {partialMask(currentBooth?.cpf || "")}</p>
           </div>
           {/* Logout: descarta o JWT e volta pra Home */}
           <button onClick={() => { signOut(); navigate("/"); }} className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors">

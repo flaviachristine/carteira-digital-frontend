@@ -60,7 +60,9 @@ export function AppStateProvider({ children }) {
     // Só faz sentido para ROLE_CLIENTE — os demais perfis não têm carteira.
     const refreshWallet = useCallback(async (active) => {
         const target = active ?? session;
-        if (target?.role !== ROLES.CLIENTE && target?.role !== ROLES.CAIXA && target?.role !== ROLES.ADMIN && target?.role !== ROLES.BARRACA)
+        // Qualquer role pode ter uma carteira (ser convidado também).
+        // Se a carteira não existir, o backend retorna erro (tratado abaixo).
+        if (!target)
             return null;
         try {
             const data = await walletService.getMyWallet();
@@ -68,8 +70,9 @@ export function AppStateProvider({ children }) {
             return data;
         }
         catch (err) {
-            report(err, "GET /carteira/saldo falhou", "Não foi possível carregar seu saldo.");
-            throw err;
+            // Se não houver carteira para essa role, retorna null sem erro crítico
+            console.debug("Carteira não disponível:", err.message);
+            return null;
         }
     }, [session, report]);
 
@@ -183,16 +186,16 @@ export function AppStateProvider({ children }) {
     }, [recordTransaction]);
 
     // Sessões derivadas, no formato que cada grupo de telas espera.
-    // currentGuest só existe para ROLE_CLIENTE (é quem tem carteira);
-    // currentBooth/cashierLoggedIn identificam o operador logado.
+    // currentGuest pode ser qualquer role que tenha uma carteira (todos podem ser convidados).
+    // currentBooth/cashierLoggedIn/adminLoggedIn identificam os operadores logados.
     const currentGuest = useMemo(() => {
-        if (session?.role !== ROLES.CLIENTE || session?.role !== ROLES.CAIXA || session?.role !== ROLES.ADMIN || session?.role !== ROLES.BARRACA)
+        if (!session || !wallet)
             return null;
         return {
             cpf: session.cpf,
             name: profileName,
-            balance: wallet?.balance ?? 0,
-            token: wallet?.token ?? "",
+            balance: wallet.balance ?? 0,
+            token: wallet.token ?? "",
         };
     }, [session, wallet, profileName]);
 

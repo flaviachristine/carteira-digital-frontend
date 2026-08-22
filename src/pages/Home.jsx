@@ -20,8 +20,8 @@ export default function Home() {
           <Bandeirinhas />
         </div>
         <div className="pt-14 pb-10 px-6 text-center">
-          <h1 className="font-display text-4xl font-extrabold text-white tracking-tight leading-none">Carteira Digital</h1>
-          <p className="text-orange-100 text-xl font-bold mt-1">Festa 2026</p>
+          <h1 className="font-display text-4xl font-extrabold text-white tracking-tight leading-none">Arraiá do Bom Jesus</h1>
+          <p className="text-orange-100 text-xl font-bold mt-1">2026</p>
         </div>
       </div>
 

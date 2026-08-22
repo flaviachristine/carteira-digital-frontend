@@ -4,28 +4,40 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 import { PageHeader, CashierBottomNav, ErrorBanner, SuccessScreen } from "../../components";
 import { R, applyMask, onlyDigits } from "../../helpers/formatter";
 import { useRequireAuth } from "../../helpers/useRequireAuth";
+import * as customerService from "../../services/customerService";
 
 // Reembolso feito pelo caixa, via POST /transacoes/reembolsar (exclusivo de ROLE_CAIXA).
 // O backend zera a carteira e devolve o saldo INTEGRAL — não existe reembolso parcial —,
 // e identifica o cliente pelo CPF. Por isso a tela não pede valor: pede o CPF, confirma
 // e mostra o valor devolvido que veio na resposta (campo "valor" do TransacaoResponse).
 // Se o cliente já estiver com saldo zero, a API responde 422 com { erro: "O cliente já possui saldo zero." }.
-export default function Refund({ cashierLoggedIn, loading: booting, refund }) {
+export default function Refund({ cashierLoggedIn, loading: booting, refund, findCustomerByCpf }) {
     const navigate = useNavigate();
     const [cpf, setCpf] = useState("");
     const [step, setStep] = useState("select");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [receipt, setReceipt] = useState(null); // transação de reembolso confirmada pelo backend
+    const [clientData, setClientData] = useState(null); // dados do cliente (nome)
     if (!useRequireAuth(cashierLoggedIn, "/cashier/login", booting))
         return null;
     const rawCpf = onlyDigits(cpf);
 
-    const goConfirm = () => {
+    const goConfirm = async () => {
         if (rawCpf.length !== 11)
             return setError("Informe os 11 dígitos do CPF do cliente.");
         setError("");
-        setStep("confirm");
+        setLoading(true);
+        try {
+            const customer = await findCustomerByCpf(rawCpf);
+            const balance = await customerService.getCustomerBalance(rawCpf);
+            setClientData({ ...customer, balance });
+            setStep("confirm");
+        } catch (err) {
+            setError(err.friendlyMessage || "Cliente não encontrado.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleConfirm = async () => {
@@ -70,19 +82,27 @@ export default function Refund({ cashierLoggedIn, loading: booting, refund }) {
               </p>
             </div>
             {error && <ErrorBanner msg={error}/>}
-            <button onClick={goConfirm} className="btn-cashier w-full">Continuar</button>
+            <button onClick={goConfirm} disabled={loading} className="btn-cashier w-full">
+              {loading ? "Buscando cliente..." : "Continuar"}
+            </button>
           </>)}
 
-        {step === "confirm" && (<div className="flex flex-col gap-4">
+        {step === "confirm" && clientData && (<div className="flex flex-col gap-4">
             <div className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-4">
               <h2 className="font-display text-xl font-bold text-center">Confirmar reembolso?</h2>
+              <div className="flex justify-between items-center border-b border-border pb-3">
+                <span className="text-muted-foreground text-sm">Cliente</span>
+                <span className="font-bold text-foreground">{clientData.name}</span>
+              </div>
               <div className="flex justify-between items-center border-b border-border pb-3">
                 <span className="text-muted-foreground text-sm">CPF</span>
                 <span className="font-bold text-foreground">{applyMask(rawCpf)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground text-sm">Valor</span>
-                <span className="font-bold text-amber-700">Saldo integral da carteira</span>
+                <span className="text-muted-foreground text-sm">Valor a reembolsar</span>
+                <span className="font-bold text-amber-700">
+                  {clientData.balance !== null && clientData.balance !== undefined ? R(clientData.balance) : "Saldo integral da carteira"}
+                </span>
               </div>
             </div>
             {error && <ErrorBanner msg={error}/>}
