@@ -16,17 +16,20 @@ export default function GuestLogin({ signIn }) {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+      e.preventDefault();
         setError("");
-        const raw = onlyDigits(cpf);
+        const formData = new FormData(e.currentTarget);
+        const raw = onlyDigits(formData.get("cpf"));
+        const passwordValue = formData.get("senha") || "";
 
         if (raw.length !== 11)
             return setError("CPF inválido. Digite todos os 11 dígitos.");
-        if (!password)
+        if (!passwordValue)
             return setError("Digite sua senha.");
         setLoading(true);
         try {
-            await signIn(raw, password, [ROLES.CLIENTE, ROLES.CAIXA, ROLES.BARRACA]);
+            await signIn(raw, passwordValue, [ROLES.CLIENTE, ROLES.CAIXA, ROLES.BARRACA]);
             navigate("/guest/wallet");
         }
         catch (err) {
@@ -44,16 +47,31 @@ export default function GuestLogin({ signIn }) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1.5">CPF</label>
             {/* applyMask formata "000.000.000-00" enquanto o usuário digita; a API recebe só os dígitos */}
-            <input type="text" inputMode="numeric" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(applyMask(e.target.value))} className="input-field"/>
+            <input id="cpf" 
+            name="cpf" 
+            type="text"
+            autoComplete="username" 
+            inputMode="numeric" 
+            placeholder="000.000.000-00" 
+            value={cpf} 
+            onChange={(e) => setCpf(applyMask(e.target.value))} 
+            className="input-field"/>
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1.5">Senha</label>
             <div className="relative">
-              <input type={showPw ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} className="input-field pr-12"/>
+              <input id="senha" 
+              name="senha" 
+              type={showPw ? "text" : "password"} 
+              placeholder="Senha"
+              autoComplete="current-password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="input-field pr-12"/>
               <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-1">
                 {showPw ? <EyeOff size={18}/> : <Eye size={18}/>}
               </button>
@@ -62,7 +80,7 @@ export default function GuestLogin({ signIn }) {
 
           {error && <ErrorBanner msg={error}/>}
 
-          <button onClick={handleLogin} disabled={loading} className="btn-primary w-full mt-1">
+          <button type="submit" disabled={loading} className="btn-primary w-full mt-1">
             {loading && <Loader2 size={18} className="animate-spin"/>}
             {loading ? "Entrando..." : "Entrar"}
           </button>
@@ -70,7 +88,7 @@ export default function GuestLogin({ signIn }) {
           <button onClick={() => navigate("/guest/register")} className="btn-secondary w-full">
             Criar minha carteira
           </button>
-        </div>
+        </form>
       </div>
     </div>);
 }

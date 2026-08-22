@@ -15,16 +15,19 @@ export default function CashierLogin({ signIn }) {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+      e.preventDefault();
         setError("");
-        const raw = onlyDigits(cpf);
+      const formData = new FormData(e.currentTarget);
+      const raw = onlyDigits(formData.get("cpf"));
+      const passwordValue = formData.get("senha") || "";
         if (raw.length !== 11)
             return setError("CPF inválido. Digite todos os 11 dígitos.");
-        if (!password)
+        if (!passwordValue)
             return setError("Digite a senha.");
         setLoading(true);
         try {
-            await signIn(raw, password, ROLES.CAIXA);
+            await signIn(raw, passwordValue, ROLES.CAIXA);
             navigate("/cashier/dashboard");
         }
         catch (err) {
@@ -40,26 +43,41 @@ export default function CashierLogin({ signIn }) {
             <Calculator size={28} className="text-green-700"/>
           </div>
         </div>
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1.5">CPF do operador</label>
-            <input type="text" inputMode="numeric" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(applyMask(e.target.value))} className="input-field"/>
+            <input type="text" 
+            id="cpf"
+            name="cpf" 
+            autoComplete="username"
+            inputMode="numeric" 
+            placeholder="000.000.000-00" 
+            value={cpf} 
+            onChange={(e) => setCpf(applyMask(e.target.value))} 
+            className="input-field"/>
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1.5">Senha</label>
             <div className="relative">
-              <input type={showPw ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} className="input-field pr-12"/>
+              <input type={showPw ? "text" : "password"} 
+              id="senha"
+              name="senha"
+              autoComplete="current-password"
+              placeholder="Senha" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="input-field pr-12"/>
               <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-1">
                 {showPw ? <EyeOff size={18}/> : <Eye size={18}/>}
               </button>
             </div>
           </div>
           {error && <ErrorBanner msg={error}/>}
-          <button onClick={handleLogin} disabled={loading} className="btn-cashier w-full">
+          <button type="submit" disabled={loading} className="btn-cashier w-full">
             {loading && <Loader2 size={18} className="animate-spin"/>}
             {loading ? "Entrando..." : "Entrar"}
           </button>
-        </div>
+        </form>
       </div>
     </div>);
 }
