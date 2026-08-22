@@ -82,7 +82,7 @@ export function AppStateProvider({ children }) {
         const restored = authService.restoreSession();
         setSession(restored);
         setProfileName(restored ? readStoredName() : "");
-        if (restored?.role === ROLES.CLIENTE) {
+        if (restored?.role === ROLES.CLIENTE || restored?.role === ROLES.CAIXA || restored?.role === ROLES.BARRACA) {
             walletService.getMyWallet()
                 .then(setWallet)
                 .catch(() => { /* token expirado/inválido: a tela protegida redireciona pro login */ })
@@ -97,6 +97,7 @@ export function AppStateProvider({ children }) {
     const signIn = useCallback(async (cpf, senha, expectedRole) => {
         setError("");
         const active = await authService.login(cpf, senha);
+
         if (!active) {
             authService.logout();
             const err = new Error("Sessão inválida.");

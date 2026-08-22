@@ -33,6 +33,7 @@ export default function GuestWallet({ currentGuest, loading, refreshWallet, sign
     };
 
     const firstName = currentGuest.name ? currentGuest.name.split(" ")[0] : "";
+
     return (<div className="min-h-screen bg-background flex flex-col pb-6">
       {/* Header */}
       <div className="bg-gradient-to-br from-primary via-orange-600 to-amber-500 px-5 pt-12 pb-8 text-white relative overflow-hidden">

@@ -1,6 +1,7 @@
 import api from "./api";
 import { clearSession, readSession, setToken } from "./authStorage";
 import { onlyDigits } from "../helpers/formatter";
+// import { appState } from "../provider/appState";
 
 // Perfis devolvidos no claim "role" do JWT (enum Role do backend).
 export const ROLES = {
@@ -16,6 +17,11 @@ export const ROLES = {
 export async function login(cpf, senha) {
     const { data } = await api.post("/auth/login", { cpf: onlyDigits(cpf), senha });
     setToken(data.token);
+    if(data.nome){
+        localStorage.setItem("carteira.nome", data.nome);
+        // writeStoredName(data.nome);
+
+    }
     return readSession(data.token);
 }
 
