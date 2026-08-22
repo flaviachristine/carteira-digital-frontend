@@ -75,7 +75,7 @@ export default function BoothTransactions({ currentBooth, loading: booting }) {
           <div className="flex flex-col gap-2">
             {txs.length === 0 ? (<div className="text-center py-10 text-muted-foreground bg-card rounded-2xl border border-border">Nenhuma transação</div>) : (txs.map((tx) => (<button key={tx.id} onClick={() => setSelected(tx)} className="w-full bg-card rounded-2xl p-4 border border-border flex flex-col sm:flex-row sm:items-center sm:justify-between text-left hover:bg-muted/50 transition-colors gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-sm text-foreground break-words">{tx.guestName || "Cliente"}</p>
+                  <p className="font-semibold text-sm text-foreground break-words">{tx.guestName || "Cliente"} - {tx.boothName}</p>
                   <p className="text-xs text-muted-foreground">{fmtTime(tx.createdAt)}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
