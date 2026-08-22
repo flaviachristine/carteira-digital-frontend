@@ -19,6 +19,7 @@ export default function Refund({ cashierLoggedIn, loading: booting, refund, find
     const [error, setError] = useState("");
     const [receipt, setReceipt] = useState(null); // transação de reembolso confirmada pelo backend
     const [clientData, setClientData] = useState(null); // dados do cliente (nome)
+
     if (!useRequireAuth(cashierLoggedIn, "/cashier/login", booting))
         return null;
     const rawCpf = onlyDigits(cpf);
@@ -101,7 +102,7 @@ export default function Refund({ cashierLoggedIn, loading: booting, refund, find
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground text-sm">Valor a reembolsar</span>
                 <span className="font-bold text-amber-700">
-                  {clientData.balance !== null && clientData.balance !== undefined ? R(clientData.balance) : "Saldo integral da carteira"}
+                  {clientData.balance !== null && clientData.balance !== undefined ? R(clientData.balance) : "Saldo total da carteira"}
                 </span>
               </div>
             </div>

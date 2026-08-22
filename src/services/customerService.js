@@ -28,17 +28,14 @@ export async function findCustomerByCpf(cpf) {
     };
 }
 
-// GET /carteira/saldo — obtém o saldo de um cliente (se o backend expor para ROLE_CAIXA).
-// Retorna o saldo se disponível, null caso contrário (ex: 403 Forbidden, endpoint não existe, etc).
-// O caixa pode não ter acesso ao saldo por motivos de privacidade/segurança.
-export async function getCustomerBalance(cpf) {
+// GET /carteira/saldo/reembolso/{cpf} — obtém o saldo de um cliente para reembolso.
+export async function getCustomerBalance(cpfReembolso) {
     try {
-        const { data } = await api.get("/carteira/saldo/reembolso", { params: { cpf: onlyDigits(cpf) } });
+        const { data } = await api.get("/carteira/saldo/reembolso", { params: { cpfReembolso: onlyDigits(cpfReembolso) } });
         return Number(data?.saldo ?? 0);
     } catch (error) {
-        // 403 (acesso negado), 404 (endpoint não existe), ou qualquer outro erro
-        // Retorna null — a tela mostrará "Saldo integral da carteira" como fallback
-        console.debug(`Não foi possível obter saldo do cliente: ${error.status || error.message}`);
+        // 403 (acesso negado), 404 (não encontrado), ou qualquer outro erro
+        // Retorna null silenciosamente — a tela mostrará "Saldo integral da carteira"
         return null;
     }
 }
