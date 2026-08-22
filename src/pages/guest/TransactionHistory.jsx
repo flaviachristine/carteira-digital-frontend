@@ -63,7 +63,7 @@ export default function TransactionHistory({ currentGuest, loading: booting, err
                     <p className="text-xs text-muted-foreground">{fmtDate(item.createdAt)} às {fmtTime(item.createdAt)}</p>
                   </div>
                 </div>
-                <p className="font-bold text-right">{R(item.amount)}</p>
+                <p className="font-bold text-right">{item.boothName} - {R(item.amount)}</p>
               </div>
             ))}
           </div>

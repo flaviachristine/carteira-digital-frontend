@@ -13,7 +13,7 @@ export function normalizeHistoryItem(item) {
         id: String(item.idTransacao ?? ""),
         type: MAPA_TIPOS[item.tipo] || "compra",
         amount: Number(item.valor ?? 0),
-        description: String(item.nomeOperador ?? "Caixa/Barraca"),
+        boothName: String(item.nomeOperador ?? "Caixa/Barraca"),
         createdAt: item.dataHora ? new Date(item.dataHora) : new Date(),
     };
 }
