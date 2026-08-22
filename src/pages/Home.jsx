@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { Wallet, Store, Calculator, Key } from "lucide-react";
 import { Bandeirinhas } from "../components";
+import { BotaoCardapio } from "../components/BotaoCardapio";
 
 // Os 4 perfis de acesso do app, cada um levando à sua própria tela de login.
 const profiles = [
@@ -39,6 +40,7 @@ export default function Home() {
               <p className="text-sm text-muted-foreground mt-0.5 leading-snug">{p.description}</p>
             </div>
           </button>))}
+          <BotaoCardapio />
 
         <p className="text-center text-xs text-muted-foreground mt-4 pb-4">
           Produzido Por Kauan Luna e Flávia Christine
