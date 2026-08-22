@@ -38,7 +38,7 @@ export default function BoothDashboard({ currentBooth, transactions, loading, si
           <p className="text-orange-100 text-sm mt-1">Toque para cobrar</p>
         </button>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <StatCard label="Vendido na sessão" value={R(totalSales)} icon={<TrendingUp size={16}/>} colorClass="bg-blue-100 text-blue-700"/>
           <StatCard label="Vendas" value={String(boothTxs.length)} icon={<Receipt size={16}/>} colorClass="bg-green-100 text-green-700"/>
           <StatCard label="Ticket médio" value={R(avgTicket)} icon={<Star size={16}/>} colorClass="bg-amber-100 text-amber-700"/>
