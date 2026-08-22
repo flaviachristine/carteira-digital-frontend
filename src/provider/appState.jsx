@@ -105,7 +105,8 @@ export function AppStateProvider({ children }) {
             throw err;
         }
         if (expectedRole) {
-            const isAllowed = Array.isArray(expectedRole) ? expectedRole.includes(active.role) : active.role === expectedRole;
+            setTimeout(()=> {}, 300) // aguarda 300ms para o token ser gravado no localStorage antes de ler a role
+             const isAllowed = Array.isArray(expectedRole) ? expectedRole.includes(active.role) : active.role === expectedRole;
             if (!isAllowed) {
                 authService.logout();
                 const err = new Error("Perfil incorreto.");
