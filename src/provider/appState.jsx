@@ -116,8 +116,8 @@ export function AppStateProvider({ children }) {
         setSession(active);
         setTransactions([]);
         setProfileName(readStoredName());
-        if (active.role === ROLES.CLIENTE)
-            await refreshWallet(active);
+        // if (active.role === ROLES.CLIENTE)
+        //     await refreshWallet(active);
         return active;
     }, [refreshWallet]);
 
