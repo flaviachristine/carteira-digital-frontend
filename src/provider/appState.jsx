@@ -105,7 +105,7 @@ export function AppStateProvider({ children }) {
             throw err;
         }
         if (expectedRole) {
-            setTimeout(()=> {}, 800) // aguarda 300ms para o token ser gravado no localStorage antes de ler a role
+            setTimeout(()=> {}, 2000) // aguarda 300ms para o token ser gravado no localStorage antes de ler a role
              const isAllowed = Array.isArray(expectedRole) ? expectedRole.includes(active.role) : active.role === expectedRole;
             if (!isAllowed) {
                 authService.logout();
